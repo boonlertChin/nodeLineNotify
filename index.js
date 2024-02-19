@@ -1,16 +1,19 @@
 const express = require('express')
 const app = express()
-const xml2js = require('xml2js')
-const axios = require('axios');
-const options = {
-  method: 'GET',
-  url: `https://trends.google.com/trends/trendingsearches/daily/rss?geo=TH`,
-  header: {
-    'X-RapidAPI-Host': `trends.google.com`
-  }
-}
+// const xml2js = require('xml2js')
+// const axios = require('axios');
+// const options = {
+//   method: 'GET',
+//   url: `https://trends.google.com/trends/trendingsearches/daily/rss?geo=TH`,
+//   header: {
+//     'X-RapidAPI-Host': `trends.google.com`
+//   }
+// }
+var bodyParser = require('body-parser');
+app.use(bodyParser.json());
+
 //options นี้จะเก็บ option เพื่อให้ axios ส่ง request ไปเอา google trend มา
-var PORT = 9000;
+var PORT = 9080;
 
 // app.get("/", (req, res) => { // เมื่อเข้า url http://localhost:3000/ แบบ get จะมาทำงานที่ method นี้นะจ๊ะ
 //   //บันทัดล่างนี้จะเป็นการใช้ axios ยิง request ไปโดยใช้ option ข้างบน มาเก็บไว้ในตัวแปร googletrenddata
@@ -76,28 +79,42 @@ var PORT = 9000;
 //   .catch((err)=>{err})
 // })
 
-app.get("/", (req, res) => { // เมื่อเข้า url http://localhost:3000/ แบบ get จะมาทำงานที่ method นี้นะจ๊ะ
-    
-   axios({
-      method: 'post',
-      url: 'https://notify-api.line.me/api/notify',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Bearer pNNrt8NCiT4gAabH5B36XBufwrSDEV2zVwY30sTtuzM`,
-      },
-      data: "message=" + msgHeader + "\n\n" + mainContent,
-    })
-    .catch(function (error) {
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      }
-    })
+app.post("/getTarget/", (req, res) => {
+  res.status(200).send({targetIP: '192.168.1.35'});
+  console.log('Incomming get req');
+  console.dir(req.body);
+});
 
-    res.status(200).send({ message: 'Success' });
-    console.log('Show log::',message);
-})
+
+app.post("/postplain/", (req, res) => {
+  console.log(new Date());
+  console.log('Incomming Post req');
+  console.dir(req.body);
+  res.status(200).send({message: 'Success'});
+});
+// /*work*/
+// app.get("/", (req, res) => { // เมื่อเข้า url http://localhost:3000/ แบบ get จะมาทำงานที่ method นี้นะจ๊ะ
+    
+//    axios({
+//       method: 'post',
+//       url: 'https://notify-api.line.me/api/notify',
+//       headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded',
+//         'Authorization': `Bearer pNNrt8NCiT4gAabH5B36XBufwrSDEV2zVwY30sTtuzM`,
+//       },
+//       data: "message=" + msgHeader + "\n\n" + mainContent,
+//     })
+//     .catch(function (error) {
+//       if (error.response) {
+//         console.log(error.response.data);
+//         console.log(error.response.status);
+//         console.log(error.response.headers);
+//       }
+//     })
+
+//     res.status(200).send({ message: 'Success' });
+//     console.log('Show log::',message);
+// })
 
 app.listen(PORT, () => {
   console.log('Start server at port:',PORT);
